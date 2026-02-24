@@ -67,19 +67,21 @@ src/
 
 ### Option 2: Using Aspire AppHost (Orchestrated)
 
-Run the Aspire AppHost to orchestrate all services:
+Run the Aspire AppHost to orchestrate all services together:
 
 ```bash
 cd src/TimescaleEdgeIoT.AppHost
 dotnet run
 ```
 
-This will start:
-- TimescaleDB container
-- pgAdmin container
-- Aspire dashboard
+The AppHost will automatically:
+- Start TimescaleDB container with pgAdmin
+- Launch the Data Ingestion service
+- Launch the Web Dashboard
+- Configure connection strings automatically
+- Provide the Aspire dashboard for monitoring
 
-> Note: You'll still need to run the DataIngestion and Web apps separately as project references aren't configured in this simplified AppHost.
+> **Note**: This requires the .NET Aspire dashboard and DCP (Distributed Component Platform) binaries. If not available, use Option 1 above.
 
 ## Features
 
