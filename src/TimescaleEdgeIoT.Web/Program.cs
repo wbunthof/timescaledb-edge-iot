@@ -46,14 +46,15 @@ app.MapGet("/api/sensor-data", async (string? deviceId, int hours = 1) =>
     var sql = deviceId != null
         ? @"SELECT time, device_id, temperature, humidity, pressure 
             FROM sensor_data 
-            WHERE device_id = @deviceId AND time > NOW() - INTERVAL '@hours hours'
+            WHERE device_id = @deviceId AND time > NOW() - @interval::interval
             ORDER BY time DESC LIMIT 1000"
         : @"SELECT time, device_id, temperature, humidity, pressure 
             FROM sensor_data 
-            WHERE time > NOW() - INTERVAL '@hours hours'
+            WHERE time > NOW() - @interval::interval
             ORDER BY time DESC LIMIT 1000";
 
-    await using var cmd = new NpgsqlCommand(sql.Replace("@hours", hours.ToString()), conn);
+    await using var cmd = new NpgsqlCommand(sql, conn);
+    cmd.Parameters.AddWithValue("interval", $"{hours} hours");
     if (deviceId != null)
     {
         cmd.Parameters.AddWithValue("deviceId", deviceId);
