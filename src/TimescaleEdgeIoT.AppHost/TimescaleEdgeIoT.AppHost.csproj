@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <EnableAspireProjectReferences>true</EnableAspireProjectReferences>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TimescaleEdgeIoT.DataIngestion\TimescaleEdgeIoT.DataIngestion.csproj" />
-    <ProjectReference Include="..\TimescaleEdgeIoT.Web\TimescaleEdgeIoT.Web.csproj" />
+    <ProjectReference Include="..\TimescaleEdgeIoT.DataIngestion\TimescaleEdgeIoT.DataIngestion.csproj" IsAspireProjectResource="true" />
+    <ProjectReference Include="..\TimescaleEdgeIoT.Web\TimescaleEdgeIoT.Web.csproj" IsAspireProjectResource="true" />
     <ProjectReference Include="..\TimescaleEdgeIoT.ServiceDefaults\TimescaleEdgeIoT.ServiceDefaults.csproj" />
   </ItemGroup>
 
