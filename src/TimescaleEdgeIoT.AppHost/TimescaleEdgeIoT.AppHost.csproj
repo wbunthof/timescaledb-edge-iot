@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="13.1.1" />
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TimescaleEdgeIoT.DataIngestion\TimescaleEdgeIoT.DataIngestion.csproj" />
+    <ProjectReference Include="..\TimescaleEdgeIoT.Web\TimescaleEdgeIoT.Web.csproj" />
+    <ProjectReference Include="..\TimescaleEdgeIoT.ServiceDefaults\TimescaleEdgeIoT.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>
