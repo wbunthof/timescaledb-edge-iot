@@ -63,7 +63,7 @@ src/
    dotnet run
    ```
 
-   Open your browser to: https://localhost:5001 (or the URL shown in the console)
+   Open your browser to the URL shown in the console (typically http://localhost:5182 or https://localhost:7040)
 
 ### Option 2: Using Aspire AppHost (Orchestrated)
 
