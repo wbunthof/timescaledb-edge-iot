@@ -1,0 +1,21 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.1.1">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UserSecretsId>c8be94be-3602-418d-ae8c-5b1086459f2c</UserSecretsId>
+	</PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" Version="13.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TimescaleEdgeIoT.DataIngestion\TimescaleEdgeIoT.DataIngestion.csproj" IsAspireProjectResource="true" />
+    <ProjectReference Include="..\TimescaleEdgeIoT.Web\TimescaleEdgeIoT.Web.csproj" IsAspireProjectResource="true" />
+    <ProjectReference Include="..\TimescaleEdgeIoT.ServiceDefaults\TimescaleEdgeIoT.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>

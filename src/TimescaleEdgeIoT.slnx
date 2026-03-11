@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="TimescaleEdgeIoT.AppHost/TimescaleEdgeIoT.AppHost.csproj" />
+  <Project Path="TimescaleEdgeIoT.DataIngestion/TimescaleEdgeIoT.DataIngestion.csproj" />
+  <Project Path="TimescaleEdgeIoT.ServiceDefaults/TimescaleEdgeIoT.ServiceDefaults.csproj" />
+  <Project Path="TimescaleEdgeIoT.Web/TimescaleEdgeIoT.Web.csproj" />
+</Solution>

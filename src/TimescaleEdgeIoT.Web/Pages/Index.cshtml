@@ -1,0 +1,213 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "TimescaleDB Edge IoT Dashboard";
+}
+
+<div class="container-fluid">
+    <h1 class="mb-4">IoT Sensor Data Dashboard</h1>
+    
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label for="deviceSelect" class="form-label">Select Device:</label>
+            <select id="deviceSelect" class="form-select">
+                <option value="">All Devices</option>
+                <option value="sensor-001">Sensor 001</option>
+                <option value="sensor-002">Sensor 002</option>
+                <option value="sensor-003">Sensor 003</option>
+                <option value="sensor-004">Sensor 004</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="timeRange" class="form-label">Time Range (hours):</label>
+            <select id="timeRange" class="form-select">
+                <option value="1" selected>Last Hour</option>
+                <option value="6">Last 6 Hours</option>
+                <option value="24">Last 24 Hours</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Temperature (°C)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="temperatureChart" height="80"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Humidity (%)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="humidityChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Pressure (hPa)</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="pressureChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    let temperatureChart, humidityChart, pressureChart;
+    const deviceColors = {
+        'sensor-001': '#FF6384',
+        'sensor-002': '#36A2EB',
+        'sensor-003': '#FFCE56',
+        'sensor-004': '#4BC0C0'
+    };
+
+    async function loadData() {
+        const deviceId = document.getElementById('deviceSelect').value;
+        const hours = document.getElementById('timeRange').value;
+        
+        const url = `/api/sensor-data?hours=${hours}${deviceId ? '&deviceId=' + deviceId : ''}`;
+        
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            updateCharts(data);
+        } catch (error) {
+            console.error('Error loading data:', error);
+        }
+    }
+
+    function updateCharts(data) {
+        // Group data by device
+        const deviceData = {};
+        
+        data.forEach(item => {
+            if (!deviceData[item.deviceId]) {
+                deviceData[item.deviceId] = [];
+            }
+            deviceData[item.deviceId].push(item);
+        });
+
+        // Prepare datasets for each device
+        const tempDatasets = [];
+        const humidityDatasets = [];
+        const pressureDatasets = [];
+
+        Object.keys(deviceData).forEach(deviceId => {
+            const points = deviceData[deviceId].reverse(); // Oldest to newest
+            
+            tempDatasets.push({
+                label: deviceId,
+                data: points.map(p => ({ x: new Date(p.time), y: p.temperature })),
+                borderColor: deviceColors[deviceId],
+                backgroundColor: deviceColors[deviceId] + '20',
+                tension: 0.4
+            });
+
+            humidityDatasets.push({
+                label: deviceId,
+                data: points.map(p => ({ x: new Date(p.time), y: p.humidity })),
+                borderColor: deviceColors[deviceId],
+                backgroundColor: deviceColors[deviceId] + '20',
+                tension: 0.4
+            });
+
+            pressureDatasets.push({
+                label: deviceId,
+                data: points.map(p => ({ x: new Date(p.time), y: p.pressure })),
+                borderColor: deviceColors[deviceId],
+                backgroundColor: deviceColors[deviceId] + '20',
+                tension: 0.4
+            });
+        });
+
+        // Update or create charts
+        updateChart('temperatureChart', tempDatasets, '°C');
+        updateChart('humidityChart', humidityDatasets, '%');
+        updateChart('pressureChart', pressureDatasets, 'hPa');
+    }
+
+    function updateChart(canvasId, datasets, unit) {
+        const ctx = document.getElementById(canvasId).getContext('2d');
+        
+        const config = {
+            type: 'line',
+            data: { datasets: datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: unit
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                }
+            }
+        };
+
+        if (canvasId === 'temperatureChart') {
+            if (temperatureChart) {
+                temperatureChart.data.datasets = datasets;
+                temperatureChart.update();
+            } else {
+                temperatureChart = new Chart(ctx, config);
+            }
+        } else if (canvasId === 'humidityChart') {
+            if (humidityChart) {
+                humidityChart.data.datasets = datasets;
+                humidityChart.update();
+            } else {
+                humidityChart = new Chart(ctx, config);
+            }
+        } else if (canvasId === 'pressureChart') {
+            if (pressureChart) {
+                pressureChart.data.datasets = datasets;
+                pressureChart.update();
+            } else {
+                pressureChart = new Chart(ctx, config);
+            }
+        }
+    }
+
+    // Event listeners
+    document.getElementById('deviceSelect').addEventListener('change', loadData);
+    document.getElementById('timeRange').addEventListener('change', loadData);
+
+    // Auto-refresh every 5 seconds
+    setInterval(loadData, 5000);
+
+    // Initial load
+    loadData();
+</script>
